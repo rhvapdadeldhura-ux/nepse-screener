@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>NEPSE Sector Screener</title>
+<style>
+body{background:#0d1117;color:#e6edf3;font-family:Segoe UI,sans-serif;padding:24px;max-width:1050px;margin:0 auto;}
+h1{margin-bottom:2px;} .asof{color:#8b98a5;font-size:13px;margin-bottom:18px;}
+.sentiment-banner{background:#132a2f;border:1px solid #1f4a4f;color:#7fd4d9;font-size:13px;padding:10px 14px;border-radius:8px;margin-bottom:14px;}
+.disclaimer{background:#2a1f14;border:1px solid #4a3a1f;color:#e8c37a;font-size:12.5px;padding:10px 14px;border-radius:8px;margin-bottom:14px;}
+.legend{background:#141b24;border:1px solid #26313d;border-radius:8px;padding:10px 16px;margin-bottom:22px;font-size:13px;}
+.legend summary{cursor:pointer;color:#5fb4c9;font-weight:600;}
+.legend-body{margin-top:10px;line-height:1.7;}
+.legend-item{margin-bottom:8px;}
+.good{color:#3fb950;} .bad{color:#f85149;}
+.muted{color:#8b98a5;font-size:11px;}
+.company-name{color:#8b98a5;font-size:11.5px;}
+.sector{background:#141b24;border:1px solid #26313d;border-radius:10px;padding:14px 18px;margin-bottom:16px;}
+.sector summary{cursor:pointer;list-style:none;}
+.sector summary::-webkit-details-marker{display:none;}
+.sector h2{font-size:15px;margin:0;color:#5fb4c9;display:inline;}
+.sector summary::before{content:"▸ ";color:#5fb4c9;}
+.sector[open] summary::before{content:"▾ ";}
+.sector table{margin-top:12px;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;color:#8b98a5;font-size:11px;text-transform:uppercase;padding:5px 8px;border-bottom:1px solid #26313d;}
+td{padding:6px 8px;border-bottom:1px solid #1e2731;vertical-align:top;}
+.up{color:#3fb950;} .down{color:#f85149;} .signal{color:#c9d1d9;font-size:12px;}
+.score-detail summary{cursor:pointer;list-style:none;}
+.score-detail summary::-webkit-details-marker{display:none;}
+.breakdown{font-size:11.5px;color:#c9d1d9;margin-top:6px;line-height:1.6;background:#0d1117;padding:8px;border-radius:6px;}
+.symbol-detail summary{cursor:pointer;list-style:none;}
+.symbol-detail summary::-webkit-details-marker{display:none;}
+.symbol-detail summary b{text-decoration:underline dotted;}
+.inline-profile{margin-top:8px;}
+.deepdive{background:#0d1117;border:1px solid #26313d;border-radius:8px;padding:12px 14px;margin-top:4px;}
+.deepdive h3{font-size:13px;color:#5fb4c9;margin:0 0 8px;}
+.subhead{font-size:11px;color:#8b98a5;text-transform:uppercase;margin:10px 0 5px;}
+table.mini{font-size:12px;}
+table.mini td, table.mini th{padding:4px 8px;}
+.tab-input{display:none;}
+.tab-bar{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid #26313d;}
+.tab-label{cursor:pointer;padding:9px 18px;color:#8b98a5;font-size:13.5px;font-weight:600;border-bottom:2px solid transparent;margin-bottom:-1px;user-select:none;}
+.tab-label:hover{color:#c9d1d9;}
+.tab-badge{background:#1f4a4f;color:#7fd4d9;border-radius:10px;padding:1px 7px;font-size:11px;margin-left:4px;}
+.tab-panel{display:none;}
+#tab-screener:checked ~ .tab-bar .tab-label-screener,
+#tab-leaderboard:checked ~ .tab-bar .tab-label-leaderboard,
+#tab-tomorrow:checked ~ .tab-bar .tab-label-tomorrow,
+#tab-adaptive:checked ~ .tab-bar .tab-label-adaptive,
+#tab-runlog:checked ~ .tab-bar .tab-label-runlog{color:#5fb4c9;border-bottom-color:#5fb4c9;}
+#tab-screener:checked ~ .tab-panel-screener{display:block;}
+#tab-leaderboard:checked ~ .tab-panel-leaderboard{display:block;}
+#tab-tomorrow:checked ~ .tab-panel-tomorrow{display:block;}
+#tab-adaptive:checked ~ .tab-panel-adaptive{display:block;}
+#tab-runlog:checked ~ .tab-panel-runlog{display:block;}
+.runlog-box{background:#0d1117;border:1px solid #26313d;border-radius:8px;padding:12px 16px;
+  font-family:Consolas,Menlo,monospace;font-size:12.5px;line-height:1.7;white-space:pre-wrap;
+  color:#c9d1d9;max-height:70vh;overflow-y:auto;}
+.runlog-err{color:#ff7b72;}
+.lb-section{background:#141b24;border:1px solid #26313d;border-radius:10px;padding:14px 18px;margin-bottom:16px;}
+.lb-section h3{font-size:14px;color:#5fb4c9;margin:0 0 10px;}
+.lb-list{margin:0;padding-left:20px;line-height:1.8;font-size:13px;}
+table.lb-table{font-size:13px;}
+.lb-radar{background:#0d1117;border:1px solid #26313d;border-radius:8px;padding:10px 14px;margin-top:8px;}
+.lb-radar ul{margin:6px 0 0;padding-left:18px;line-height:1.7;font-size:12.5px;color:#c9d1d9;}
+</style></head><body><div style="background:#5b2e00;color:#ffe6b3;font-family:system-ui,sans-serif;font-weight:700;text-align:center;padding:10px 16px;font-size:14px;letter-spacing:.02em;border-bottom:3px solid #d9a441;">&#9888; SAMPLE / DEMO DATA -- all tickers, prices, and broker names below are fictional, generated for a portfolio demonstration. Not real NEPSE market data.</div>
+<h1>NEPSE Sector-Wise Screener</h1>
+<div class="asof">As of 2026-10-04 &middot; 40 symbols across 8 sectors &middot; generated 2026-10-04</div>
+<div class="sentiment-banner">📊 Today's market mood: <b>mixed / balanced</b> &mdash; 52% of stocks advancing, average move +0.34%. This feeds into every stock's Sentiment score below.</div>
+<div class="disclaimer">⚠️ Research shortlist only, not financial advice. Nothing here is a prediction of future performance -- always verify current prices and do your own research before trading.</div>
+
+<input type="radio" name="tabs" id="tab-screener" class="tab-input" checked>
+<input type="radio" name="tabs" id="tab-leaderboard" class="tab-input">
+<input type="radio" name="tabs" id="tab-tomorrow" class="tab-input">
+<input type="radio" name="tabs" id="tab-adaptive" class="tab-input">
+<input type="radio" name="tabs" id="tab-runlog" class="tab-input">
+<div class="tab-bar">
+  <label for="tab-screener" class="tab-label tab-label-screener">📋 Screener</label>
+  <label for="tab-leaderboard" class="tab-label tab-label-leaderboard">🏆 Leaderboard <span class='tab-badge'>1</span></label>
+  <label for="tab-tomorrow" class="tab-label tab-label-tomorrow">🔮 Tomorrow <span class='tab-badge'>1</span></label>
+  <label for="tab-adaptive" class="tab-label tab-label-adaptive">🧪 Adaptive</label>
+  <label for="tab-runlog" class="tab-label tab-label-runlog">🪵 Run Log</label>
+</div>
+
+<div class="tab-panel tab-panel-screener">
+  <div class="muted" style="margin-bottom:16px;">Click a sector name to expand its stocks. Click a symbol (underlined) to expand its full profile inline, if you've fetched it with --company.</div>
+  
+      <details class="legend">
+        <summary>How is Score calculated? (click to expand)</summary>
+        <div class="legend-body">
+          <div class="legend-item"><b>Score is a weighted blend of three layers</b>, each 0&ndash;100, click any stock's score to see its own breakdown:</div>
+          <div class="legend-item">1. <b>Technical (50% weight)</b> &mdash; momentum, volume vs. its own average, RSI, MACD. Reflects short-term price/volume behavior.</div>
+          <div class="legend-item">2. <b>Sentiment (25% weight)</b> &mdash; today's market breadth (% of NEPSE advancing) blended with whether this stock's sector is outperforming the overall market today. NEPSE is retail-driven, so sector rotation and day-to-day mood genuinely move prices here.</div>
+          <div class="legend-item">3. <b>Fundamentals (25% weight, only when available)</b> &mdash; P/E (15&ndash;30 is typical on NEPSE, above 40 is stretched), EPS, and bonus-share consistency over recent years. Only populated once you run <code>--company SYMBOL</code> for that stock -- until then its weight shifts proportionally onto Technical + Sentiment rather than being guessed.</div>
+          <div class="legend-item"><b>RSI (0&ndash;100)</b> &mdash; <span class="good">below 30</span> = oversold (may bounce), <span class="bad">above 70</span> = overbought (may pull back).</div>
+          <div class="legend-item"><b>Vol (volume ratio)</b> &mdash; <span class="good">above 1.3x</span> = notably more interest than usual; <span class="bad">below 0.6x</span> = quiet.</div>
+          <div class="legend-item">None of this is a prediction or financial advice -- it's a way to prioritize your own research, not a buy signal.</div>
+        </div>
+      </details>
+  
+          <details class="sector">
+            <summary><h2>Banking <span class="muted">(5 stocks)</span></h2></summary>
+            <table>
+              <thead><tr><th>Symbol / Company</th><th>Close</th><th>Chg</th><th>RSI</th><th>Vol</th><th>Signal</th><th>Score (click)</th></tr></thead>
+              <tbody>
+              <tr>
+                <td><b>GRKB</b><br><span class="company-name"></span></td>
+                <td>287.00</td>
+                <td class="down">-3.25%</td>
+                <td>40</td>
+                <td>0.7x</td>
+                <td class="signal">bullish MACD</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>53</b></summary>
+                    <div class="breakdown">Technical: 62 &times; 50%<br>Sentiment: 34 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company GRKB</span></div>
+                  </details>
+                </td>
+              </tr>
+              <tr>
+                <td><b>UDBL</b><br><span class="company-name"></span></td>
+                <td>1434.76</td>
+                <td class="down">-4.58%</td>
+                <td>28</td>
+                <td>1.9x</td>
+                <td class="signal">oversold, bearish MACD, above-avg volume</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>51</b></summary>
+                    <div class="breakdown">Technical: 59 &times; 50%<br>Sentiment: 34 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company UDBL</span></div>
+                  </details>
+                </td>
+              </tr>
+              <tr>
+                <td><b>SNFB</b><br><span class="company-name"></span></td>
+                <td>1594.90</td>
+                <td class="down">-0.46%</td>
+                <td>52</td>
+                <td>0.2x</td>
+                <td class="signal">bullish MACD, quiet volume</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>51</b></summary>
+                    <div class="breakdown">Technical: 59 &times; 50%<br>Sentiment: 34 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company SNFB</span></div>
+                  </details>
+                </td>
+              </tr>
+              <tr>
+                <td><b>HMBL</b><br><span class="company-name"></span></td>
+                <td>685.20</td>
+                <td class="down">-1.22%</td>
+                <td>51</td>
+                <td>0.3x</td>
+                <td class="signal">bearish MACD, quiet volume</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>40</b></summary>
+                    <div class="breakdown">Technical: 43 &times; 50%<br>Sentiment: 34 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company HMBL</span></div>
+                  </details>
+                </td>
+              </tr>
+              <tr>
+                <td><b>PCNB</b><br><span class="company-name"></span></td>
+                <td>798.90</td>
+                <td class="down">-2.44%</td>
+                <td>35</td>
+                <td>0.2x</td>
+                <td class="signal">bearish MACD, quiet volume</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>37</b></summary>
+                    <div class="breakdown">Technical: 38 &times; 50%<br>Sentiment: 34 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company PCNB</span></div>
+                  </details>
+                </td>
+              </tr></tbody>
+            </table>
+          </details>
+          <details class="sector">
+            <summary><h2>Finance <span class="muted">(5 stocks)</span></h2></summary>
+            <table>
+              <thead><tr><th>Symbol / Company</th><th>Close</th><th>Chg</th><th>RSI</th><th>Vol</th><th>Signal</th><th>Score (click)</th></tr></thead>
+              <tbody>
+              <tr>
+                <td><b>TRFC</b><br><span class="company-name"></span></td>
+                <td>1101.18</td>
+                <td class="down">-0.21%</td>
+                <td>57</td>
+                <td>1.8x</td>
+                <td class="signal">bearish MACD, above-avg volume</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>61</b></summary>
+                    <div class="breakdown">Technical: 66 &times; 50%<br>Sentiment: 50 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company TRFC</span></div>
+                  </details>
+                </td>
+              </tr>
+              <tr>
+                <td><b>NBFC</b><br><span class="company-name"></span></td>
+                <td>214.87</td>
+                <td class="down">-0.44%</td>
+                <td>55</td>
+                <td>0.3x</td>
+                <td class="signal">bullish MACD, quiet volume</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>57</b></summary>
+                    <div class="breakdown">Technical: 61 &times; 50%<br>Sentiment: 50 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company NBFC</span></div>
+                  </details>
+                </td>
+              </tr>
+              <tr>
+                <td><b>UDFC</b><br><span class="company-name"></span></td>
+                <td>1391.42</td>
+                <td class="up">+0.58%</td>
+                <td>44</td>
+                <td>1.4x</td>
+                <td class="signal">bearish MACD, above-avg volume</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>57</b></summary>
+                    <div class="breakdown">Technical: 61 &times; 50%<br>Sentiment: 50 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company UDFC</span></div>
+                  </details>
+                </td>
+              </tr>
+              <tr>
+                <td><b>SHFC</b><br><span class="company-name"></span></td>
+                <td>1601.23</td>
+                <td class="down">-0.10%</td>
+                <td>38</td>
+                <td>1.2x</td>
+                <td class="signal">bearish MACD</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>54</b></summary>
+                    <div class="breakdown">Technical: 56 &times; 50%<br>Sentiment: 50 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company SHFC</span></div>
+                  </details>
+                </td>
+              </tr>
+              <tr>
+                <td><b>PCFN</b><br><span class="company-name"></span></td>
+                <td>1427.61</td>
+                <td class="up">+1.29%</td>
+                <td>46</td>
+                <td>0.3x</td>
+                <td class="signal">bearish MACD, quiet volume</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>48</b></summary>
+                    <div class="breakdown">Technical: 47 &times; 50%<br>Sentiment: 50 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company PCFN</span></div>
+                  </details>
+                </td>
+              </tr></tbody>
+            </table>
+          </details>
+          <details class="sector">
+            <summary><h2>Hotels & Tourism <span class="muted">(5 stocks)</span></h2></summary>
+            <table>
+              <thead><tr><th>Symbol / Company</th><th>Close</th><th>Chg</th><th>RSI</th><th>Vol</th><th>Signal</th><th>Score (click)</th></tr></thead>
+              <tbody>
+              <tr>
+                <td><b>ANHT</b><br><span class="company-name"></span></td>
+                <td>1345.99</td>
+                <td class="down">-0.40%</td>
+                <td>48</td>
+                <td>1.5x</td>
+                <td class="signal">bullish MACD, above-avg volume</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>68</b></summary>
+                    <div class="breakdown">Technical: 78 &times; 50%<br>Sentiment: 47 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company ANHT</span></div>
+                  </details>
+                </td>
+              </tr>
+              <tr>
+                <td><b>SGTV</b><br><span class="company-name"></span></td>
+                <td>420.72</td>
+                <td class="up">+3.34%</td>
+                <td>61</td>
+                <td>0.1x</td>
+                <td class="signal">bullish MACD, quiet volume</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>58</b></summary>
+                    <div class="breakdown">Technical: 63 &times; 50%<br>Sentiment: 47 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company SGTV</span></div>
+                  </details>
+                </td>
+              </tr>
+              <tr>
+                <td><b>RLHT</b><br><span class="company-name"></span></td>
+                <td>843.57</td>
+                <td class="up">+0.64%</td>
+                <td>44</td>
+                <td>0.4x</td>
+                <td class="signal">bearish MACD, quiet volume</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>47</b></summary>
+                    <div class="breakdown">Technical: 47 &times; 50%<br>Sentiment: 47 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company RLHT</span></div>
+                  </details>
+                </td>
+              </tr>
+              <tr>
+                <td><b>HMTR</b><br><span class="company-name"></span></td>
+                <td>500.74</td>
+                <td class="down">-1.35%</td>
+                <td>35</td>
+                <td>0.6x</td>
+                <td class="signal">bearish MACD</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>46</b></summary>
+                    <div class="breakdown">Technical: 45 &times; 50%<br>Sentiment: 47 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company HMTR</span></div>
+                  </details>
+                </td>
+              </tr>
+              <tr>
+                <td><b>PKHT</b><br><span class="company-name"></span></td>
+                <td>495.46</td>
+                <td class="down">-3.47%</td>
+                <td>43</td>
+                <td>0.6x</td>
+                <td class="signal">bearish MACD, quiet volume</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>44</b></summary>
+                    <div class="breakdown">Technical: 43 &times; 50%<br>Sentiment: 47 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company PKHT</span></div>
+                  </details>
+                </td>
+              </tr></tbody>
+            </table>
+          </details>
+          <details class="sector">
+            <summary><h2>Hydropower <span class="muted">(5 stocks)</span></h2></summary>
+            <table>
+              <thead><tr><th>Symbol / Company</th><th>Close</th><th>Chg</th><th>RSI</th><th>Vol</th><th>Signal</th><th>Score (click)</th></tr></thead>
+              <tbody>
+              <tr>
+                <td><b>SNHY</b><br><span class="company-name"></span></td>
+                <td>2129.37</td>
+                <td class="up">+6.65%</td>
+                <td>69</td>
+                <td>2.1x</td>
+                <td class="signal">bearish MACD, volume spike</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>73</b></summary>
+                    <div class="breakdown">Technical: 78 &times; 50%<br>Sentiment: 64 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company SNHY</span></div>
+                  </details>
+                </td>
+              </tr>
+              <tr>
+                <td><b>BLHY</b><br><span class="company-name"></span></td>
+                <td>1619.65</td>
+                <td class="up">+1.65%</td>
+                <td>39</td>
+                <td>3.6x</td>
+                <td class="signal">bearish MACD, volume spike</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>69</b></summary>
+                    <div class="breakdown">Technical: 72 &times; 50%<br>Sentiment: 64 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company BLHY</span></div>
+                  </details>
+                </td>
+              </tr>
+              <tr>
+                <td><b>TRHP</b><br><span class="company-name"></span></td>
+                <td>1314.50</td>
+                <td class="up">+2.28%</td>
+                <td>52</td>
+                <td>1.4x</td>
+                <td class="signal">bearish MACD, above-avg volume</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>65</b></summary>
+                    <div class="breakdown">Technical: 65 &times; 50%<br>Sentiment: 64 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company TRHP</span></div>
+                  </details>
+                </td>
+              </tr>
+              <tr>
+                <td><b>KRNH</b><br><span class="company-name"></span></td>
+                <td>1329.41</td>
+                <td class="up">+2.10%</td>
+                <td>67</td>
+                <td>0.2x</td>
+                <td class="signal">bullish MACD, quiet volume</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>62</b></summary>
+                    <div class="breakdown">Technical: 61 &times; 50%<br>Sentiment: 64 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company KRNH</span></div>
+                  </details>
+                </td>
+              </tr>
+              <tr>
+                <td><b>MRGH</b><br><span class="company-name"></span></td>
+                <td>1886.87</td>
+                <td class="down">-0.36%</td>
+                <td>67</td>
+                <td>0.4x</td>
+                <td class="signal">bullish MACD, quiet volume</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>61</b></summary>
+                    <div class="breakdown">Technical: 59 &times; 50%<br>Sentiment: 64 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company MRGH</span></div>
+                  </details>
+                </td>
+              </tr></tbody>
+            </table>
+          </details>
+          <details class="sector">
+            <summary><h2>Insurance <span class="muted">(5 stocks)</span></h2></summary>
+            <table>
+              <thead><tr><th>Symbol / Company</th><th>Close</th><th>Chg</th><th>RSI</th><th>Vol</th><th>Signal</th><th>Score (click)</th></tr></thead>
+              <tbody>
+              <tr>
+                <td><b>PRIN</b><br><span class="company-name"></span></td>
+                <td>2047.73</td>
+                <td class="up">+3.46%</td>
+                <td>71</td>
+                <td>1.2x</td>
+                <td class="signal">overbought, bullish MACD</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>68</b></summary>
+                    <div class="breakdown">Technical: 76 &times; 50%<br>Sentiment: 51 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company PRIN</span></div>
+                  </details>
+                </td>
+              </tr>
+              <tr>
+                <td><b>SGIL</b><br><span class="company-name"></span></td>
+                <td>358.12</td>
+                <td class="down">-2.01%</td>
+                <td>47</td>
+                <td>1.1x</td>
+                <td class="signal">bullish MACD</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>64</b></summary>
+                    <div class="breakdown">Technical: 70 &times; 50%<br>Sentiment: 51 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company SGIL</span></div>
+                  </details>
+                </td>
+              </tr>
+              <tr>
+                <td><b>HMIN</b><br><span class="company-name"></span></td>
+                <td>1246.28</td>
+                <td class="up">+1.01%</td>
+                <td>59</td>
+                <td>0.5x</td>
+                <td class="signal">bullish MACD, quiet volume</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>60</b></summary>
+                    <div class="breakdown">Technical: 65 &times; 50%<br>Sentiment: 51 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company HMIN</span></div>
+                  </details>
+                </td>
+              </tr>
+              <tr>
+                <td><b>CTIN</b><br><span class="company-name"></span></td>
+                <td>1311.65</td>
+                <td class="up">+0.83%</td>
+                <td>50</td>
+                <td>1.1x</td>
+                <td class="signal">bearish MACD</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>56</b></summary>
+                    <div class="breakdown">Technical: 59 &times; 50%<br>Sentiment: 51 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company CTIN</span></div>
+                  </details>
+                </td>
+              </tr>
+              <tr>
+                <td><b>NBIC</b><br><span class="company-name"></span></td>
+                <td>1766.95</td>
+                <td class="down">-1.11%</td>
+                <td>56</td>
+                <td>0.3x</td>
+                <td class="signal">bullish MACD, quiet volume</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>56</b></summary>
+                    <div class="breakdown">Technical: 59 &times; 50%<br>Sentiment: 51 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company NBIC</span></div>
+                  </details>
+                </td>
+              </tr></tbody>
+            </table>
+          </details>
+          <details class="sector">
+            <summary><h2>Investment <span class="muted">(5 stocks)</span></h2></summary>
+            <table>
+              <thead><tr><th>Symbol / Company</th><th>Close</th><th>Chg</th><th>RSI</th><th>Vol</th><th>Signal</th><th>Score (click)</th></tr></thead>
+              <tbody>
+              <tr>
+                <td><b>SNIV</b><br><span class="company-name"></span></td>
+                <td>982.31</td>
+                <td class="up">+1.21%</td>
+                <td>41</td>
+                <td>0.8x</td>
+                <td class="signal">bullish MACD</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>65</b></summary>
+                    <div class="breakdown">Technical: 70 &times; 50%<br>Sentiment: 54 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company SNIV</span></div>
+                  </details>
+                </td>
+              </tr>
+              <tr>
+                <td><b>ANIV</b><br><span class="company-name"></span></td>
+                <td>289.02</td>
+                <td class="down">-0.23%</td>
+                <td>63</td>
+                <td>1.0x</td>
+                <td class="signal">bullish MACD</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>64</b></summary>
+                    <div class="breakdown">Technical: 69 &times; 50%<br>Sentiment: 54 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company ANIV</span></div>
+                  </details>
+                </td>
+              </tr>
+              <tr>
+                <td><b>HMIV</b><br><span class="company-name"></span></td>
+                <td>253.21</td>
+                <td class="up">+0.55%</td>
+                <td>52</td>
+                <td>0.3x</td>
+                <td class="signal">bullish MACD, quiet volume</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>60</b></summary>
+                    <div class="breakdown">Technical: 63 &times; 50%<br>Sentiment: 54 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company HMIV</span></div>
+                  </details>
+                </td>
+              </tr>
+              <tr>
+                <td><b>VKIV</b><br><span class="company-name"></span></td>
+                <td>1611.43</td>
+                <td class="down">-3.00%</td>
+                <td>47</td>
+                <td>0.7x</td>
+                <td class="signal">bullish MACD</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>60</b></summary>
+                    <div class="breakdown">Technical: 63 &times; 50%<br>Sentiment: 54 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company VKIV</span></div>
+                  </details>
+                </td>
+              </tr>
+              <tr>
+                <td><b>GRIV</b><br><span class="company-name"></span></td>
+                <td>2014.49</td>
+                <td class="up">+5.57%</td>
+                <td>62</td>
+                <td>0.1x</td>
+                <td class="signal">bearish MACD, quiet volume</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>51</b></summary>
+                    <div class="breakdown">Technical: 50 &times; 50%<br>Sentiment: 54 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company GRIV</span></div>
+                  </details>
+                </td>
+              </tr></tbody>
+            </table>
+          </details>
+          <details class="sector">
+            <summary><h2>Manufacturing <span class="muted">(5 stocks)</span></h2></summary>
+            <table>
+              <thead><tr><th>Symbol / Company</th><th>Close</th><th>Chg</th><th>RSI</th><th>Vol</th><th>Signal</th><th>Score (click)</th></tr></thead>
+              <tbody>
+              <tr>
+                <td><b>KTMN</b><br><span class="company-name"></span></td>
+                <td>1248.35</td>
+                <td class="down">-1.40%</td>
+                <td>44</td>
+                <td>1.9x</td>
+                <td class="signal">bearish MACD, above-avg volume</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>60</b></summary>
+                    <div class="breakdown">Technical: 67 &times; 50%<br>Sentiment: 45 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company KTMN</span></div>
+                  </details>
+                </td>
+              </tr>
+              <tr>
+                <td><b>SNMF</b><br><span class="company-name"></span></td>
+                <td>1972.49</td>
+                <td class="up">+0.25%</td>
+                <td>46</td>
+                <td>1.6x</td>
+                <td class="signal">bearish MACD, above-avg volume</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>58</b></summary>
+                    <div class="breakdown">Technical: 65 &times; 50%<br>Sentiment: 45 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company SNMF</span></div>
+                  </details>
+                </td>
+              </tr>
+              <tr>
+                <td><b>LXMN</b><br><span class="company-name"></span></td>
+                <td>1241.14</td>
+                <td class="up">+0.48%</td>
+                <td>40</td>
+                <td>0.9x</td>
+                <td class="signal">bearish MACD</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>51</b></summary>
+                    <div class="breakdown">Technical: 54 &times; 50%<br>Sentiment: 45 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company LXMN</span></div>
+                  </details>
+                </td>
+              </tr>
+              <tr>
+                <td><b>GRMN</b><br><span class="company-name"></span></td>
+                <td>287.03</td>
+                <td class="down">-2.46%</td>
+                <td>51</td>
+                <td>0.9x</td>
+                <td class="signal">bearish MACD</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>49</b></summary>
+                    <div class="breakdown">Technical: 51 &times; 50%<br>Sentiment: 45 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company GRMN</span></div>
+                  </details>
+                </td>
+              </tr>
+              <tr>
+                <td><b>BHMN</b><br><span class="company-name"></span></td>
+                <td>518.27</td>
+                <td class="up">+0.06%</td>
+                <td>37</td>
+                <td>0.4x</td>
+                <td class="signal">bearish MACD, quiet volume</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>44</b></summary>
+                    <div class="breakdown">Technical: 44 &times; 50%<br>Sentiment: 45 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company BHMN</span></div>
+                  </details>
+                </td>
+              </tr></tbody>
+            </table>
+          </details>
+          <details class="sector">
+            <summary><h2>Microfinance <span class="muted">(5 stocks)</span></h2></summary>
+            <table>
+              <thead><tr><th>Symbol / Company</th><th>Close</th><th>Chg</th><th>RSI</th><th>Vol</th><th>Signal</th><th>Score (click)</th></tr></thead>
+              <tbody>
+              <tr>
+                <td><b>GRMF</b><br><span class="company-name"></span></td>
+                <td>1065.99</td>
+                <td class="up">+4.46%</td>
+                <td>56</td>
+                <td>3.7x</td>
+                <td class="signal">bearish MACD, volume spike</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>72</b></summary>
+                    <div class="breakdown">Technical: 77 &times; 50%<br>Sentiment: 61 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company GRMF</span></div>
+                  </details>
+                </td>
+              </tr>
+              <tr>
+                <td><b>VKMF</b><br><span class="company-name"></span></td>
+                <td>1432.07</td>
+                <td class="up">+1.59%</td>
+                <td>55</td>
+                <td>1.4x</td>
+                <td class="signal">bearish MACD, above-avg volume</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>63</b></summary>
+                    <div class="breakdown">Technical: 64 &times; 50%<br>Sentiment: 61 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company VKMF</span></div>
+                  </details>
+                </td>
+              </tr>
+              <tr>
+                <td><b>SHMF</b><br><span class="company-name"></span></td>
+                <td>1050.72</td>
+                <td class="down">-0.09%</td>
+                <td>31</td>
+                <td>1.1x</td>
+                <td class="signal">bearish MACD</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>56</b></summary>
+                    <div class="breakdown">Technical: 54 &times; 50%<br>Sentiment: 61 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company SHMF</span></div>
+                  </details>
+                </td>
+              </tr>
+              <tr>
+                <td><b>ANMF</b><br><span class="company-name"></span></td>
+                <td>710.51</td>
+                <td class="up">+2.50%</td>
+                <td>50</td>
+                <td>0.2x</td>
+                <td class="signal">bearish MACD, quiet volume</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>52</b></summary>
+                    <div class="breakdown">Technical: 48 &times; 50%<br>Sentiment: 61 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company ANMF</span></div>
+                  </details>
+                </td>
+              </tr>
+              <tr>
+                <td><b>LXMF</b><br><span class="company-name"></span></td>
+                <td>590.15</td>
+                <td class="up">+1.76%</td>
+                <td>53</td>
+                <td>0.2x</td>
+                <td class="signal">bearish MACD, quiet volume</td>
+                <td>
+                  <details class="score-detail">
+                    <summary><b>51</b></summary>
+                    <div class="breakdown">Technical: 46 &times; 50%<br>Sentiment: 61 &times; 25%<br><span class="muted">Fundamentals: not fetched -- run --company LXMF</span></div>
+                  </details>
+                </td>
+              </tr></tbody>
+            </table>
+          </details>
+</div>
+
+<div class="tab-panel tab-panel-leaderboard">
+  <div class="lb-section"><h3>🔥 Top Sector Rotation</h3><ol class='lb-list'><li><b>Hydropower</b> &mdash; 3-session turnover 583,084,008, avg daily move +0.90%</li><li><b>Insurance</b> &mdash; 3-session turnover 332,119,650, avg daily move +0.66%</li></ol></div><div class="lb-section"><h3>🏆 Top Picks (Ranked by Total Marks)</h3>
+            <table class="lb-table">
+              <thead><tr><th>Ticker</th><th>Sector</th><th>Sector (20)</th><th>Rule 1 (40)</th>
+                <th>Rule 2 (40)</th><th>Total (100)</th><th>Core Justification</th></tr></thead>
+              <tbody>
+              <tr>
+                <td><b>SNHY</b></td>
+                <td>Hydropower</td>
+                <td>20</td>
+                <td>40</td>
+                <td>0</td>
+                <td><b>60</b></td>
+                <td class="signal">Broker Sample Securities Alpha handled 46.2% of today's volume (buy 30,993 / sell 3,203, ratio 9.7:1). Conditions not met (turnover not >=2x its 10-day average).</td>
+              </tr></tbody>
+            </table></div><div class="lb-section"><h3>🚨 Disciplined Risk Radar</h3>
+              <div class="lb-radar">
+                <b>SNHY</b>
+                <ul>
+                  <li>Opening day range limit (10% circuit off today's close):
+                      1916.43 &ndash; 2342.31</li>
+                  <li>Buy trigger price range: 2150.67 &ndash; 2172.18</li>
+                  <li>5% hard stop-loss (off est. entry 2161.42): 2053.35</li>
+                </ul>
+              </div></div>
+</div>
+
+<div class="tab-panel tab-panel-tomorrow">
+  <div class="lb-section"><h3>🚨 Disciplined Risk Radar -- Next Session Triggers</h3><div class='muted' style='margin-bottom:10px;'>Derived from today's close and, where available, the late-session portion of today's floorsheet. Not a guarantee -- a hard circuit-band cap and a 5% stop-loss are built in on purpose.</div>
+          <div class="lb-radar">
+            <b>SNHY</b> <span class="muted">(Hydropower, Total 60/100)</span>
+            <ul>
+              <li>Opening day range limit (10% circuit off today's close):
+                  1916.43 &ndash; 2342.31</li>
+              <li>Buy trigger price range: 2150.67 &ndash; 2172.18</li>
+              <li>5% hard stop-loss (off est. entry 2161.42): 2053.35</li>
+            </ul>
+          </div></div>
+</div>
+
+<div class="tab-panel tab-panel-adaptive">
+  <div class="lb-section"><h3>🔮 Latest Adaptive Recommendations (2026-10-04)</h3><h3>Daily Review -- 2026-10-04</h3>
+<p><i>Paper-trading research only. No real orders are placed.</i></p>
+<h4>NEPSE Breakout With Confirmed Broker Accumulation (<code>baseline_v1</code>)</h4>
+<p><b>No qualified trade today.</b> This is a valid outcome, not a failure.</p>
+<h4>Experimental: relaxed selection (<code>relaxed_shadow_v1</code>)</h4>
+<p><b>No qualified trade today.</b> This is a valid outcome, not a failure.</p>
+<h4>Experimental: strict selection (<code>strict_shadow_v1</code>)</h4>
+<p><b>No qualified trade today.</b> This is a valid outcome, not a failure.</p>
+<h4>Market Regime</h4>
+<p>52% of stocks advancing today -- regime classified as <b>mixed</b>.</p>
+<h4>What worked / what didn't (plain language)</h4>
+<p>Baseline found nothing today. Check the shadow strategies' rejects above for which exact gate (score, relative volume, breakout, broker flow) is closest to being cleared -- that's the plain-language read on 'what didn't work' today, not a verdict on the strategy itself.</p></div><div class="lb-section"><h3>📊 Strategy Comparison (Baseline vs Shadow)</h3><table class="dataframe lb-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>week_ending</th>
+      <th>version_id</th>
+      <th>trades_completed</th>
+      <th>win_rate</th>
+      <th>avg_win</th>
+      <th>avg_loss</th>
+      <th>expectancy_r</th>
+      <th>profit_factor</th>
+      <th>max_drawdown</th>
+      <th>avg_holding_period</th>
+      <th>net_pnl_total</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2026-10-04</td>
+      <td>baseline_v1</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <td>2026-10-04</td>
+      <td>relaxed_shadow_v1</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <td>2026-10-04</td>
+      <td>strict_shadow_v1</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table></div><div class='muted' style='margin-top:10px;'>Paper-trading research only -- no real orders are placed. Figures reflect however many trades have closed so far and will be noisy until there's a real sample size.</div>
+</div>
+
+<div class="tab-panel tab-panel-runlog">
+  <div class="muted" style="margin-bottom:10px;">Routine progress messages from this run -- moved here instead of the terminal. Real errors are highlighted and also still print to the console immediately when they happen.</div>
+  <div class='runlog-box'>SAMPLE RUN -- using preloaded fictional data (no live scraping performed) for a portfolio demo.
+Loaded 45 days of price history for 40 symbols across 8 sectors.
+Loaded floorsheet: floorsheet_2026-10-04.csv (559 rows, 40 symbol(s): [&#x27;ANHT&#x27;, &#x27;ANIV&#x27;, &#x27;ANMF&#x27;, &#x27;BHMN&#x27;, &#x27;BLHY&#x27;, &#x27;CTIN&#x27;, &#x27;GRIV&#x27;, &#x27;GRKB&#x27;, &#x27;GRMF&#x27;, &#x27;GRMN&#x27;]...)
+
+# NEPSE Leaderboard -- Phase 1-4 Rule-Based Scoring
+
+_Generated 2026-10-04. Floorsheet: floorsheet_2026-10-04.csv._
+
+## 🔥 TOP NEPSE SECTOR ROTATION
+
+1. **Hydropower** -- 3-session turnover 583,084,008, avg daily move +0.90%
+2. **Insurance** -- 3-session turnover 332,119,650, avg daily move +0.66%
+
+## 🏆 TOP PICKS FOR TOMORROW (Ranked by Total Marks)
+
+| Ticker | Sector | Sector Marks (20) | Rule 1 Marks (40) | Rule 2 Marks (40) | Total Marks (100) | Core Justification |
+|---|---|---|---|---|---|---|
+| SNHY | Hydropower | 20 | 40 | 0 | 60 | Broker Sample Securities Alpha handled 46.2% of today&#x27;s volume (buy 30,993 / sell 3,203, ratio 9.7:1). Conditions not met (turnover not &gt;=2x its 10-day average). |
+
+## 🚨 DISCIPLINED RISK RADAR
+
+**SNHY**
+- Opening day range limit (10% circuit off today&#x27;s close): 1916.43 - 2342.31
+- Buy trigger price range: 2150.67 - 2172.18
+- 5% hard stop-loss (off est. entry 2161.42): 2053.35
+
+
+Leaderboard written to: /tmp/claude-0/-home-claude/8adb338e-6d53-523d-b4ee-6a4b67a653a1/scratchpad/demo/leaderboard.md
+
+=== Adaptive Evaluation Engine (paper trading / research only) ===
+Loaded floorsheet: floorsheet_2026-10-04.csv (559 rows, 40 symbol(s): [&#x27;ANHT&#x27;, &#x27;ANIV&#x27;, &#x27;ANMF&#x27;, &#x27;BHMN&#x27;, &#x27;BLHY&#x27;, &#x27;CTIN&#x27;, &#x27;GRIV&#x27;, &#x27;GRKB&#x27;, &#x27;GRMF&#x27;, &#x27;GRMN&#x27;]...)
+Daily review written to: /tmp/claude-0/-home-claude/8adb338e-6d53-523d-b4ee-6a4b67a653a1/scratchpad/demo/adaptive/daily_review_2026-10-04.md
+Weekly review written to: /tmp/claude-0/-home-claude/8adb338e-6d53-523d-b4ee-6a4b67a653a1/scratchpad/demo/adaptive/weekly_strategy_review_2026-10-04.md
+=== Adaptive cycle complete. Paper trading only -- no orders were placed. ===
+</div>
+</div>
+</body></html>

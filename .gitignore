@@ -1,0 +1,10 @@
+nepse_data/
+floorsheet_data/
+index_data/
+company_data/
+adaptive/
+sector_map.json
+holidays.json
+report.html
+__pycache__/
+*.pyc
